@@ -1,9 +1,15 @@
+# Step 0 : Setting up
+
+# Generals settings
+language: node_js
 sudo: required
+
+# Services required to go trought
 services:
   - docker
 
 
-# Testing (web client only)
+# Step 1: Testing (web client only)
 
 before_install:
 
@@ -13,14 +19,14 @@ before_install:
 script:
 
   # Run tests on temporay image
-	- docker run gradedjestrisk/multi-docker-test npm test -- --coverage
+- docker run gradedjestrisk/multi-docker-test npm test -- --coverage
 
 
-# Pushing all images to DockerHub
+# Step 2 : Pushing all images to DockerHub
 
 after_success:
 
-	# Building images
+  # Building images
   - docker build -t "$DOCKER_ID"/multi-client ./client
   - docker build -t "$DOCKER_ID"/multi-nginx  ./nginx
   - docker build -t "$DOCKER_ID"/multi-server ./server

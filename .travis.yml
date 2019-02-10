@@ -2,17 +2,35 @@ sudo: required
 services:
   - docker
 
+
+# Testing (web client only)
+
+before_install:
+
+  # Build temporary image 
+  - docker build -t gradedjestrisk/multi-docker-test -f ./client/Dockerfile.dev ./client
+
+script:
+
+  # Run tests on temporay image
+	- docker run gradedjestrisk/multi-docker-test npm test -- --coverage
+
+
+# Pushing all images to DockerHub
+
 after_success:
-  - docker build -t "$DOCKER_ID" /multi-client ./client
-  - docker build -t "$DOCKER_ID" /multi-nginx ./nginx
-  - docker build -t "$DOCKER_ID" /multi-server ./server
-  - docker build -t "$DOCKER_ID" /multi-worker ./worker
+
+	# Building images
+  - docker build -t "$DOCKER_ID"/multi-client ./client
+  - docker build -t "$DOCKER_ID"/multi-nginx  ./nginx
+  - docker build -t "$DOCKER_ID"/multi-server ./server
+  - docker build -t "$DOCKER_ID"/multi-worker ./worker
   
-  # Log in to the docker CLI
+  # Loggin in
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
 
-  # Take those images and push them to docker hub
-  - docker push "$DOCKER_ID" /multi-client
-  - docker push "$DOCKER_ID" /multi-nginx
-  - docker push "$DOCKER_ID" /multi-server
-  - docker push "$DOCKER_ID" /multi-worker
+  # Pushing images
+  - docker push "$DOCKER_ID"/multi-client
+  - docker push "$DOCKER_ID"/multi-nginx
+  - docker push "$DOCKER_ID"/multi-server
+  - docker push "$DOCKER_ID"/multi-worker

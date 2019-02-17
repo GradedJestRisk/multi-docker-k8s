@@ -8,6 +8,8 @@ sudo: required
 services:
   - docker
 
+env:
+  - version=1
 
 # Step 1: Testing (web client only)
 
@@ -27,7 +29,7 @@ script:
 after_success:
 
   # Building images
-  - docker build -t "$DOCKER_ID"/multi-client ./client
+  - docker build -t "$DOCKER_ID"/multi-client:$version ./client
   - docker build -t "$DOCKER_ID"/multi-nginx  ./nginx
   - docker build -t "$DOCKER_ID"/multi-server ./server
   - docker build -t "$DOCKER_ID"/multi-worker ./worker
@@ -36,7 +38,7 @@ after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
 
   # Pushing images
-  - docker push "$DOCKER_ID"/multi-client
+  - docker push "$DOCKER_ID"/multi-client:$version
   - docker push "$DOCKER_ID"/multi-nginx
   - docker push "$DOCKER_ID"/multi-server
   - docker push "$DOCKER_ID"/multi-worker
